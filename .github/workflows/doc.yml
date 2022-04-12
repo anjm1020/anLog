@@ -1,12 +1,17 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Docs Build
+name: DOC
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: master
+    branches:
+      - master
+#   pull_request:
+#     types: [closed]
+#     branches:
+#       - master
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -14,22 +19,29 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  BUILD_TRIGGER:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     env:
-      RTD_TOKEN: ${{secrets.RTD_TOKEN}}
-      RTD_BUILD_TRIGGER_API : ${{secrets.RTD_BUILD_TRIGGER_API}}
+      TOKEN : ${{secrets.RTD_TOKEN}}
+      BUILD_URL : ${{secrets.RTD_BUILD_TRIGGER_API}}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
-      # Build Trigger
-      - name: Build Trigger
-      - run: |
-              curl \
-              -X POST
-                -H "Authorization: Token :RTD_TOKEN" :RTD_BUILD_TRIGGER_API
-
+      
+     # RTD build trigger
+#       - name: Send RTD build trigger API on pull request
+#         if: github.event_name == 'pull_request' && github.event.pull_request.merged == 'true'
+#         run: |
+#           curl \
+#           -X POST \
+#           -H "Authorization: Token $TOKEN" $BUILD_URL
+          
+      - name: Send RTD build trigger API on push
+#         if: github.event_name == 'push'
+        run: |
+          curl \
+          -X POST \
+          -H "Authorization: Token $TOKEN" $BUILD_URL
